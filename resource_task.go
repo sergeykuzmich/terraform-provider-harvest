@@ -12,10 +12,6 @@ func resourceTask() *schema.Resource {
 		Delete: resourceTaskDelete,
 
 		Schema: map[string]*schema.Schema{
-			"id": &schema.Schema{
-				Type:     schema.TypeInt,
-				Computed: true,
-			},
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
 				Required: true,
@@ -23,18 +19,22 @@ func resourceTask() *schema.Resource {
 			"billable_by_default": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
+				Default:  true,
 			},
 			"default_hourly_rate": &schema.Schema{
-				Type:     schema.TypeBool,
+				Type:     schema.TypeInt,
 				Optional: true,
+				Default:  0,
 			},
 			"is_default": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
+				Default:  false,
 			},
 			"is_active": &schema.Schema{
 				Type:     schema.TypeBool,
 				Optional: true,
+				Default:  true,
 			},
 			"created_at": &schema.Schema{
 				Type:     schema.TypeString,
