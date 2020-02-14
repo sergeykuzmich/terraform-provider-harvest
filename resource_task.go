@@ -49,6 +49,8 @@ func resourceTask() *schema.Resource {
 }
 
 func resourceTaskCreate(d *schema.ResourceData, m interface{}) error {
+	name := d.Get("name").(string)
+	d.SetId(name)
 	return resourceTaskRead(d, m)
 }
 
