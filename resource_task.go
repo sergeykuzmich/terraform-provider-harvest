@@ -22,7 +22,7 @@ func resourceTask() *schema.Resource {
 				Default:  true,
 			},
 			"default_hourly_rate": &schema.Schema{
-				Type:     schema.TypeInt,
+				Type:     schema.TypeFloat,
 				Optional: true,
 				Default:  0,
 			},
