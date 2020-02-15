@@ -2,6 +2,8 @@ package main
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/sergeykuzmich/harvest"
+	"github.com/spf13/cast"
 )
 
 func resourceTask() *schema.Resource {
@@ -49,20 +51,71 @@ func resourceTask() *schema.Resource {
 }
 
 func resourceTaskCreate(d *schema.ResourceData, m interface{}) error {
-	name := d.Get("name").(string)
-	d.SetId(name)
+	api := harvest.NewTokenAPI(m.(*Config).AccountId, m.(*Config).AccessToken)
+
+	task_data := harvest.Task{
+		Name:              d.Get("name").(string),
+		BillableByDefault: d.Get("billable_by_default").(bool),
+		IsActive:          d.Get("is_active").(bool),
+		DefaultHourlyRate: d.Get("default_hourly_rate").(float64),
+		IsDefault:         d.Get("is_default").(bool),
+	}
+
+	task, error := api.CreateTask(&task_data, harvest.Defaults())
+	if error != nil {
+		return error
+	}
+
+	d.SetId(cast.ToString(task.ID))
 	return resourceTaskRead(d, m)
 }
 
 func resourceTaskRead(d *schema.ResourceData, m interface{}) error {
+	api := harvest.NewTokenAPI(m.(*Config).AccountId, m.(*Config).AccessToken)
+	task, error := api.GetTask(cast.ToInt64(d.Id()), harvest.Defaults())
+	if error != nil {
+		return error
+	}
+
+	d.Set("name", task.Name)
+	d.Set("billable_by_default", task.BillableByDefault)
+	d.Set("is_active", task.IsActive)
+	d.Set("default_hourly_rate", task.DefaultHourlyRate)
+	d.Set("is_default", task.IsDefault)
+	d.Set("created_at", cast.ToString(task.CreatedAt))
+	d.Set("updated_at", cast.ToString(task.UpdatedAt))
+
 	return nil
 }
 
 func resourceTaskUpdate(d *schema.ResourceData, m interface{}) error {
+	api := harvest.NewTokenAPI(m.(*Config).AccountId, m.(*Config).AccessToken)
+
+	task_data := harvest.Task{
+		ID:                cast.ToInt64(d.Id()),
+		Name:              d.Get("name").(string),
+		BillableByDefault: d.Get("billable_by_default").(bool),
+		IsActive:          d.Get("is_active").(bool),
+		DefaultHourlyRate: d.Get("default_hourly_rate").(float64),
+		IsDefault:         d.Get("is_default").(bool),
+	}
+
+	_, error := api.UpdateTask(&task_data, harvest.Defaults())
+	if error != nil {
+		return error
+	}
+
 	return resourceTaskRead(d, m)
 }
 
 func resourceTaskDelete(d *schema.ResourceData, m interface{}) error {
+	api := harvest.NewTokenAPI(m.(*Config).AccountId, m.(*Config).AccessToken)
+
+	error := api.DeleteTask(cast.ToInt64(d.Id()), harvest.Defaults())
+	if error != nil {
+		return error
+	}
+
 	d.SetId("")
 	return nil
 }
