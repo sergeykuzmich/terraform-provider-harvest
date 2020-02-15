@@ -63,5 +63,6 @@ func resourceTaskUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTaskDelete(d *schema.ResourceData, m interface{}) error {
+	d.SetId("")
 	return nil
 }
