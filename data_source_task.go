@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/adlio/harvest"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/sergeykuzmich/harvest"
 	"github.com/spf13/cast"
 )
 
