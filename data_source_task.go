@@ -58,7 +58,7 @@ func dataSourceTaskRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("billable_by_default", task.BillableByDefault)
 	d.Set("default_hourly_rate", task.DefaultHourlyRate)
 	d.Set("is_default", task.IsDefault)
-	d.Set("is_active", !task.Deactivated)
+	d.Set("is_active", task.IsActive)
 	d.Set("created_at", cast.ToString(task.CreatedAt))
 	d.Set("updated_at", cast.ToString(task.UpdatedAt))
 

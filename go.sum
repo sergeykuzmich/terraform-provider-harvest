@@ -282,6 +282,10 @@ github.com/satori/go.uuid v1.2.0/go.mod h1:dA0hQrYB0VpLJoorglMZABFdXlWrHn1NEOzdh
 github.com/sean-/seed v0.0.0-20170313163322-e2103e2c3529/go.mod h1:DxrIzT+xaE7yg65j358z/aeFdxmN0P9QXhEzd20vsDc=
 github.com/sergeykuzmich/harvest v1.0.0 h1:2xcFKPYxJUqFL32o64qeVKWSdgG4tEgZs7W4RBlBihc=
 github.com/sergeykuzmich/harvest v1.0.0/go.mod h1:dKSXiu6bItQ5KoxyS0krhOmcyqV8ZCNmUICYuuG7iiQ=
+github.com/sergeykuzmich/harvest v1.1.0 h1:M9qwzKoW1g0YIjc6amR+rSF1Lb3LXHKHD+2OjGRFPtM=
+github.com/sergeykuzmich/harvest v1.1.0/go.mod h1:dKSXiu6bItQ5KoxyS0krhOmcyqV8ZCNmUICYuuG7iiQ=
+github.com/sergeykuzmich/harvest v1.1.2 h1:EE/Lv9pQNcBiiWFeYvlWCBgiGU6wZgfhRuzBY3fFYKQ=
+github.com/sergeykuzmich/harvest v1.1.2/go.mod h1:dKSXiu6bItQ5KoxyS0krhOmcyqV8ZCNmUICYuuG7iiQ=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d/go.mod h1:OnSkiWE9lh6wB0YB77sQom3nweQdgAjqCqsofrRNTgc=
