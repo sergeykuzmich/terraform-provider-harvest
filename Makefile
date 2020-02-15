@@ -1,10 +1,10 @@
-default: fmt build copy
+default: fmt build propagate
 
 fmt:
 	go fmt .
 
-build: fmt
+build:
 	go build -o terraform-provider-harvest
 
-copy: build
+propagate: build
 	cp terraform-provider-harvest ~/.terraform.d/plugins/terraform-provider-harvest
