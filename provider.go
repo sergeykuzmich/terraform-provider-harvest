@@ -23,6 +23,9 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"harvest_task": resourceTask(),
 		},
+		DataSourcesMap: map[string]*schema.Resource{
+			"harvest_task": dataSourceTask(),
+		},
 		ConfigureFunc: configureProvider,
 	}
 }
