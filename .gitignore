@@ -30,3 +30,6 @@ override.tf.json
 
 # Ignore compiled binary
 terraform-provider-harvest
+
+# OS
+.DS_Store

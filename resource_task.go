@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/sergeykuzmich/harvest"
+	"github.com/sergeykuzmich/harvestapp-sdk"
 	"github.com/spf13/cast"
 )
 
@@ -51,9 +51,9 @@ func resourceTask() *schema.Resource {
 }
 
 func resourceTaskCreate(d *schema.ResourceData, m interface{}) error {
-	api := harvest.NewTokenAPI(m.(*Config).AccountId, m.(*Config).AccessToken)
+	api := sdk.Harvest(m.(*Config).AccountId, m.(*Config).AccessToken)
 
-	task_data := harvest.Task{
+	task_data := sdk.Task{
 		Name:              d.Get("name").(string),
 		BillableByDefault: d.Get("billable_by_default").(bool),
 		IsActive:          d.Get("is_active").(bool),
@@ -61,7 +61,7 @@ func resourceTaskCreate(d *schema.ResourceData, m interface{}) error {
 		IsDefault:         d.Get("is_default").(bool),
 	}
 
-	task, error := api.CreateTask(&task_data, harvest.Defaults())
+	task, error := api.CreateTask(&task_data, sdk.Defaults())
 	if error != nil {
 		return error
 	}
@@ -71,8 +71,8 @@ func resourceTaskCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTaskRead(d *schema.ResourceData, m interface{}) error {
-	api := harvest.NewTokenAPI(m.(*Config).AccountId, m.(*Config).AccessToken)
-	task, error := api.GetTask(cast.ToInt64(d.Id()), harvest.Defaults())
+	api := sdk.Harvest(m.(*Config).AccountId, m.(*Config).AccessToken)
+	task, error := api.GetTask(cast.ToInt(d.Id()), sdk.Defaults())
 	if error != nil {
 		return error
 	}
@@ -89,10 +89,10 @@ func resourceTaskRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTaskUpdate(d *schema.ResourceData, m interface{}) error {
-	api := harvest.NewTokenAPI(m.(*Config).AccountId, m.(*Config).AccessToken)
+	api := sdk.Harvest(m.(*Config).AccountId, m.(*Config).AccessToken)
 
-	task_data := harvest.Task{
-		ID:                cast.ToInt64(d.Id()),
+	task_data := sdk.Task{
+		ID:                cast.ToInt(d.Id()),
 		Name:              d.Get("name").(string),
 		BillableByDefault: d.Get("billable_by_default").(bool),
 		IsActive:          d.Get("is_active").(bool),
@@ -100,7 +100,7 @@ func resourceTaskUpdate(d *schema.ResourceData, m interface{}) error {
 		IsDefault:         d.Get("is_default").(bool),
 	}
 
-	_, error := api.UpdateTask(&task_data, harvest.Defaults())
+	_, error := api.UpdateTask(&task_data, sdk.Defaults())
 	if error != nil {
 		return error
 	}
@@ -109,9 +109,9 @@ func resourceTaskUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTaskDelete(d *schema.ResourceData, m interface{}) error {
-	api := harvest.NewTokenAPI(m.(*Config).AccountId, m.(*Config).AccessToken)
+	api := sdk.Harvest(m.(*Config).AccountId, m.(*Config).AccessToken)
 
-	error := api.DeleteTask(cast.ToInt64(d.Id()), harvest.Defaults())
+	error := api.DeleteTask(cast.ToInt(d.Id()), sdk.Defaults())
 	if error != nil {
 		return error
 	}

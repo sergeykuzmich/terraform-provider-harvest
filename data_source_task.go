@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
-	"github.com/sergeykuzmich/harvest"
+	"github.com/sergeykuzmich/harvestapp-sdk"
 	"github.com/spf13/cast"
 )
 
@@ -48,10 +48,10 @@ func dataSourceTask() *schema.Resource {
 }
 
 func dataSourceTaskRead(d *schema.ResourceData, m interface{}) error {
-	api := harvest.NewTokenAPI(m.(*Config).AccountId, m.(*Config).AccessToken)
+	api := sdk.Harvest(m.(*Config).AccountId, m.(*Config).AccessToken)
 
-	task_id := cast.ToInt64(d.Get("task_id"))
-	task, _ := api.GetTask(task_id, harvest.Defaults())
+	task_id := cast.ToInt(d.Get("task_id"))
+	task, _ := api.GetTask(task_id, sdk.Defaults())
 
 	d.SetId(cast.ToString(task.ID))
 	d.Set("name", task.Name)
