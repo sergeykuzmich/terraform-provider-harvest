@@ -48,10 +48,10 @@ func dataSourceTask() *schema.Resource {
 }
 
 func dataSourceTaskRead(d *schema.ResourceData, m interface{}) error {
-	api := sdk.Harvest(m.(*Config).AccountId, m.(*Config).AccessToken)
+	api := hrvst.Client(m.(*Config).AccountId, m.(*Config).AccessToken)
 
 	task_id := cast.ToInt(d.Get("task_id"))
-	task, _ := api.GetTask(task_id, sdk.Defaults())
+	task, _ := api.GetTask(task_id, hrvst.Defaults())
 
 	d.SetId(cast.ToString(task.ID))
 	d.Set("name", task.Name)
