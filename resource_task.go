@@ -51,9 +51,9 @@ func resourceTask() *schema.Resource {
 }
 
 func resourceTaskCreate(d *schema.ResourceData, m interface{}) error {
-	api := sdk.Harvest(m.(*Config).AccountId, m.(*Config).AccessToken)
+	api := hrvst.Client(m.(*Config).AccountId, m.(*Config).AccessToken)
 
-	task_data := sdk.Task{
+	task_data := hrvst.Task{
 		Name:              d.Get("name").(string),
 		BillableByDefault: d.Get("billable_by_default").(bool),
 		IsActive:          d.Get("is_active").(bool),
@@ -61,7 +61,7 @@ func resourceTaskCreate(d *schema.ResourceData, m interface{}) error {
 		IsDefault:         d.Get("is_default").(bool),
 	}
 
-	task, error := api.CreateTask(&task_data, sdk.Defaults())
+	task, error := api.CreateTask(&task_data, hrvst.Defaults())
 	if error != nil {
 		return error
 	}
@@ -71,8 +71,8 @@ func resourceTaskCreate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTaskRead(d *schema.ResourceData, m interface{}) error {
-	api := sdk.Harvest(m.(*Config).AccountId, m.(*Config).AccessToken)
-	task, error := api.GetTask(cast.ToInt(d.Id()), sdk.Defaults())
+	api := hrvst.Client(m.(*Config).AccountId, m.(*Config).AccessToken)
+	task, error := api.GetTask(cast.ToInt(d.Id()), hrvst.Defaults())
 	if error != nil {
 		return error
 	}
@@ -89,9 +89,9 @@ func resourceTaskRead(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTaskUpdate(d *schema.ResourceData, m interface{}) error {
-	api := sdk.Harvest(m.(*Config).AccountId, m.(*Config).AccessToken)
+	api := hrvst.Client(m.(*Config).AccountId, m.(*Config).AccessToken)
 
-	task_data := sdk.Task{
+	task_data := hrvst.Task{
 		ID:                cast.ToInt(d.Id()),
 		Name:              d.Get("name").(string),
 		BillableByDefault: d.Get("billable_by_default").(bool),
@@ -100,7 +100,7 @@ func resourceTaskUpdate(d *schema.ResourceData, m interface{}) error {
 		IsDefault:         d.Get("is_default").(bool),
 	}
 
-	_, error := api.UpdateTask(&task_data, sdk.Defaults())
+	_, error := api.UpdateTask(&task_data, hrvst.Defaults())
 	if error != nil {
 		return error
 	}
@@ -109,9 +109,9 @@ func resourceTaskUpdate(d *schema.ResourceData, m interface{}) error {
 }
 
 func resourceTaskDelete(d *schema.ResourceData, m interface{}) error {
-	api := sdk.Harvest(m.(*Config).AccountId, m.(*Config).AccessToken)
+	api := hrvst.Client(m.(*Config).AccountId, m.(*Config).AccessToken)
 
-	error := api.DeleteTask(cast.ToInt(d.Id()), sdk.Defaults())
+	error := api.DeleteTask(cast.ToInt(d.Id()), hrvst.Defaults())
 	if error != nil {
 		return error
 	}

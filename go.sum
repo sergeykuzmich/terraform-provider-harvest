@@ -253,6 +253,8 @@ github.com/sergeykuzmich/harvestapp-sdk v0.2.0 h1:vpkttGG3C23OJOw/mROZKCCIpFN0S9
 github.com/sergeykuzmich/harvestapp-sdk v0.2.0/go.mod h1:EmkGXVF+TNvjE9uPxTtjK8nB6dqyF9qjBXpCdY4zgAA=
 github.com/sergeykuzmich/harvestapp-sdk v0.2.1 h1:MGKz+nZK4c19vCNQU+TUK2Ti8g3CaBQbJdYc9u82wuM=
 github.com/sergeykuzmich/harvestapp-sdk v0.2.1/go.mod h1:EmkGXVF+TNvjE9uPxTtjK8nB6dqyF9qjBXpCdY4zgAA=
+github.com/sergeykuzmich/harvestapp-sdk v0.3.0 h1:/7Zt5wkWXl8wAKK63Xr0f9FUjP/wVvWZO2U5a96LAq0=
+github.com/sergeykuzmich/harvestapp-sdk v0.3.0/go.mod h1:EmkGXVF+TNvjE9uPxTtjK8nB6dqyF9qjBXpCdY4zgAA=
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
 github.com/spf13/afero v1.2.2 h1:5jhuqJyZCZf2JRofRvN/nIFgIWNzPa3/Vz8mYylgbWc=
 github.com/spf13/afero v1.2.2/go.mod h1:9ZxEEn6pIJ8Rxe320qSDBk6AsU0r9pR7Q4OcevTdifk=
