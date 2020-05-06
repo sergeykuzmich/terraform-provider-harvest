@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/sergeykuzmich/harvestapp-sdk"
 	"github.com/spf13/cast"
@@ -11,12 +12,14 @@ func dataSourceTask() *schema.Resource {
 		Read: dataSourceTaskRead,
 
 		Schema: map[string]*schema.Schema{
-			"task_id": &schema.Schema{
-				Type:     schema.TypeString,
-				Required: true,
+			"id": &schema.Schema{
+				Type:     schema.TypeInt,
+				Optional: true,
+				Computed: true,
 			},
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
+				Optional: true,
 				Computed: true,
 			},
 			"billable_by_default": &schema.Schema{
@@ -50,8 +53,69 @@ func dataSourceTask() *schema.Resource {
 func dataSourceTaskRead(d *schema.ResourceData, m interface{}) error {
 	api := hrvst.Client(m.(*Config).AccountId, m.(*Config).AccessToken)
 
-	task_id := cast.ToInt(d.Get("task_id"))
-	task, _ := api.GetTask(task_id, hrvst.Defaults())
+	_, okId := d.GetOk("id")
+	_, okName := d.GetOk("name")
+
+	if !okId && !okName {
+		return fmt.Errorf("define task id or name")
+	}
+
+	var task *hrvst.Task
+
+	if okId {
+		id, err := cast.ToIntE(d.Get("id"))
+		if err != nil {
+			return fmt.Errorf("task id should be convertable integer")
+		}
+
+		task, err = api.GetTask(id, hrvst.Defaults())
+
+		if err != nil {
+			return fmt.Errorf("on getting task - %s", err)
+		}
+	}
+
+	if okName {
+		name, err := cast.ToStringE(d.Get("name"))
+		if err != nil {
+			return fmt.Errorf("task name should be convertable to string")
+		}
+
+		if task != nil && task.Name != name {
+			return fmt.Errorf("task found by id, but has different name - %s", task.Name)
+		}
+
+		if task == nil {
+
+			tasks, next, err := api.GetTasks(hrvst.Defaults())
+
+			for {
+				if err != nil {
+					return fmt.Errorf("on task finding by name - %s", err)
+				}
+
+				if len(tasks) > 0 {
+					for i := 0; i < len(tasks); i++ {
+						if tasks[i].Name == name {
+							task = tasks[i]
+							break
+						}
+					}
+				}
+
+				if next == nil {
+					break
+				}
+
+				tasks, next, err = next()
+			}
+		}
+
+	}
+
+	if task == nil {
+		return fmt.Errorf("task not found")
+	}
 
 	d.SetId(cast.ToString(task.ID))
 	d.Set("name", task.Name)
