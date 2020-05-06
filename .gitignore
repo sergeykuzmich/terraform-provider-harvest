@@ -33,3 +33,5 @@ terraform-provider-harvest
 
 # OS
 .DS_Store
+
+.idea
