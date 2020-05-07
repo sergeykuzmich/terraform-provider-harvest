@@ -81,36 +81,14 @@ func dataSourceTaskRead(d *schema.ResourceData, m interface{}) error {
 			return fmt.Errorf("task name should be convertable to string")
 		}
 
-		if task != nil && task.Name != name {
+		if task == nil {
+			task, err = getTaskByName(name, api)
+			if err != nil {
+				return err
+			}
+		} else if task.Name != name {
 			return fmt.Errorf("task found by id, but has different name - %s", task.Name)
 		}
-
-		if task == nil {
-
-			tasks, next, err := api.GetTasks(hrvst.Defaults())
-
-			for {
-				if err != nil {
-					return fmt.Errorf("on task finding by name - %s", err)
-				}
-
-				if len(tasks) > 0 {
-					for i := 0; i < len(tasks); i++ {
-						if tasks[i].Name == name {
-							task = tasks[i]
-							break
-						}
-					}
-				}
-
-				if next == nil {
-					break
-				}
-
-				tasks, next, err = next()
-			}
-		}
-
 	}
 
 	if task == nil {
@@ -127,4 +105,28 @@ func dataSourceTaskRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("updated_at", cast.ToString(task.UpdatedAt))
 
 	return nil
+}
+
+func getTaskByName(name string, api *hrvst.API) (*hrvst.Task, error) {
+	tasks, next, err := api.GetTasks(hrvst.Defaults())
+
+	for {
+		if err != nil {
+			return nil, fmt.Errorf("on task finding by name - %s", err)
+		}
+
+		for i := 0; i < len(tasks); i++ {
+			if tasks[i].Name == name {
+				return tasks[i], nil
+			}
+		}
+
+		if next == nil {
+			break
+		}
+
+		tasks, next, err = next()
+	}
+
+	return nil, nil
 }
