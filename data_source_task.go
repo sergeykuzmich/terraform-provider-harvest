@@ -53,26 +53,18 @@ func dataSourceTask() *schema.Resource {
 func dataSourceTaskRead(d *schema.ResourceData, m interface{}) error {
 	api := hrvst.Client(m.(*Config).AccountId, m.(*Config).AccessToken)
 
-	id, idOk := d.GetOk("id")
-	name, nameOk := d.GetOk("name")
-
-	if !idOk && !nameOk {
-		return fmt.Errorf("Missing required argument")
-	}
-
-	if idOk && nameOk {
-		return fmt.Errorf("Whether ID or Name should be provided but not both of them")
+	filter, err := getInputArgument(d)
+	if err != nil {
+		return err
 	}
 
 	var task *hrvst.Task
-	var err error
 
-	if idOk {
-		id := cast.ToInt(id)
-		task, err = api.GetTask(id, hrvst.Defaults())
-	} else {
-		name := cast.ToString(name)
-		task, err = getTaskByName(name, api)
+	switch filter.Type {
+	case "ID":
+		task, err = api.GetTask(cast.ToInt(filter.Value), hrvst.Defaults())
+	case "Name":
+		task, err = getTaskByName(cast.ToString(filter.Value), api)
 	}
 
 	if err != nil {
@@ -89,6 +81,36 @@ func dataSourceTaskRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("updated_at", cast.ToString(task.UpdatedAt))
 
 	return nil
+}
+
+type argumment struct {
+	Value interface{}
+	Type  string
+}
+
+func getInputArgument(d *schema.ResourceData) (argumment, error) {
+	id, idOk := d.GetOk("id")
+	name, nameOk := d.GetOk("name")
+
+	output := argumment{}
+
+	if !idOk && !nameOk {
+		return output, fmt.Errorf("Missing required argument")
+	}
+
+	if idOk && nameOk {
+		return output, fmt.Errorf("Whether ID or Name should be provided but not both of them")
+	}
+
+	if idOk {
+		output.Value = id
+		output.Type = "ID"
+	} else {
+		output.Value = name
+		output.Type = "Name"
+	}
+
+	return output, nil
 }
 
 func getTaskByName(name string, api *hrvst.API) (*hrvst.Task, error) {
