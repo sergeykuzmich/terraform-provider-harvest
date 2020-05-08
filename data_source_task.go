@@ -53,46 +53,30 @@ func dataSourceTask() *schema.Resource {
 func dataSourceTaskRead(d *schema.ResourceData, m interface{}) error {
 	api := hrvst.Client(m.(*Config).AccountId, m.(*Config).AccessToken)
 
-	_, okId := d.GetOk("id")
-	_, okName := d.GetOk("name")
+	id, idOk := d.GetOk("id")
+	name, nameOk := d.GetOk("name")
 
-	if !okId && !okName {
-		return fmt.Errorf("define task id or name")
+	if !idOk && !nameOk {
+		return fmt.Errorf("Missing required argument")
+	}
+
+	if idOk && nameOk {
+		return fmt.Errorf("Whether ID or Name should be provided but not both of them")
 	}
 
 	var task *hrvst.Task
+	var err error
 
-	if okId {
-		id, err := cast.ToIntE(d.Get("id"))
-		if err != nil {
-			return fmt.Errorf("task id should be convertable integer")
-		}
-
+	if idOk {
+		id := cast.ToInt(id)
 		task, err = api.GetTask(id, hrvst.Defaults())
-
-		if err != nil {
-			return fmt.Errorf("on getting task - %s", err)
-		}
+	} else {
+		name := cast.ToString(name)
+		task, err = getTaskByName(name, api)
 	}
 
-	if okName {
-		name, err := cast.ToStringE(d.Get("name"))
-		if err != nil {
-			return fmt.Errorf("task name should be convertable to string")
-		}
-
-		if task == nil {
-			task, err = getTaskByName(name, api)
-			if err != nil {
-				return err
-			}
-		} else if task.Name != name {
-			return fmt.Errorf("task found by id, but has different name - %s", task.Name)
-		}
-	}
-
-	if task == nil {
-		return fmt.Errorf("task not found")
+	if err != nil {
+		return err
 	}
 
 	d.SetId(cast.ToString(task.ID))
@@ -112,7 +96,7 @@ func getTaskByName(name string, api *hrvst.API) (*hrvst.Task, error) {
 
 	for {
 		if err != nil {
-			return nil, fmt.Errorf("on task finding by name - %s", err)
+			return nil, err
 		}
 
 		for i := 0; i < len(tasks); i++ {
@@ -128,5 +112,5 @@ func getTaskByName(name string, api *hrvst.API) (*hrvst.Task, error) {
 		tasks, next, err = next()
 	}
 
-	return nil, nil
+	return nil, fmt.Errorf("Not Found: %s", name)
 }
